@@ -6,7 +6,7 @@ import seaborn as sns
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import KNNImputer, IterativeImputer
 from impyute.imputation.cs import mice
-from data_viz import missing_columns, missing_corr
+#from data_viz import missing_columns, missing_corr
 
 def convert_data():
     raw_data = loadarff('5year.arff')
@@ -65,32 +65,34 @@ def standardise(pol):
     
     pol.to_csv("pol_standardise_x.csv")
 
-pol = pd.read_csv("pol_impute.csv", index_col = 0)
-
-print(pol)
-
 def heatmap_matrix(pol_impute):
+    #pol = pol.drop(columns = ["Attr28", "Attr41", "Attr43", "Attr32", "Attr59", "Attr52",
+    #        "Attr5", "Attr47", "Attr15", "Attr4", "Attr30", "Attr20", "Attr57"])
+    
     cor_matrix = pol_impute.corr().abs()
 
     upper_tri = cor_matrix.where(np.triu(np.ones(cor_matrix.shape),k=1)
                          .astype(np.bool))
-    sns.heatmap(upper_tri)
     
     drop_col(upper_tri, cor_matrix, pol_impute)
 
 def drop_col(upper_tri, cor_matrix, pol_impute):
     to_drop = [column for column in upper_tri.columns
                if any(upper_tri[column] > 0.70)]
-    print(to_drop)
+    #print(to_drop)
 
     #Has a colinearity of 0.5
-    print(cor_matrix.iloc[0:1, 6:7])
+    #print(cor_matrix.iloc[0:1, 6:7])
+    
+    upper_tri = upper_tri.drop(columns = to_drop)
+    
+    sns.heatmap(upper_tri.iloc[1:66, 1:66])
 
-    pol_new = pol_impute.drop(to_drop, axis = 1)
+    #pol_new = pol_impute.drop(to_drop, axis = 1)
     
-    pol_new_csv(pol_new)
+    #pol_new_csv(pol_new, pol)
     
-def pol_new_csv(pol_new):
+def pol_new_csv(pol_new, pol):
     print(pol_new.head())
     print(pol)
 
@@ -100,7 +102,25 @@ def pol_new_csv(pol_new):
 
     pol_new.to_csv("pol_new.csv")
 
-pol = pd.read_csv("pol_impute.csv", index_col = 0)
+#pol = pd.read_csv("pol.csv")
 
-print(pol)
-heatmap_matrix(pol)
+#mice()
+
+pol_impute = pd.read_csv("pol.csv")
+
+cor_matrix = pol_impute.corr().abs()
+
+upper_tri = cor_matrix.where(np.triu(np.ones(cor_matrix.shape),k=1)
+                     .astype(np.bool))
+
+to_drop = [column for column in upper_tri.columns
+           if any(upper_tri[column] > 0.70)]
+
+upper_tri = pol_impute.drop(columns = to_drop)
+
+sns.heatmap(upper_tri.iloc[1:20, 1:20])
+
+#heatmap_matrix(pol_impute)
+
+#standardise(pol_impute)
+

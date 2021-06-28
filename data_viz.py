@@ -11,6 +11,15 @@ pol = pd.DataFrame(raw_data[0])
 print(pol.head())
 print(pol.tail())
 
+df = pol.iloc[:,0:64]
+
+print(df.iloc[:,56].max() - df.iloc[:,56].min())
+print(df.iloc[:,2].max() - df.iloc[:,2].min())
+
+print(df.iloc[:,54].max())
+
+print(df.iloc[:,2].max())
+
 if os.path.isfile("pol.csv"):
     pass
 else:
@@ -36,6 +45,12 @@ def missing_columns(pol):
 def missing_corr(dfs):
     missing_df = dfs.columns[dfs.isnull().any()].tolist()
     msno.heatmap(dfs[missing_df], figsize=(20,20))
+
+def generate_sparsity_matrix(dfs):
+    missing_df_i = dfs.columns[dfs.isnull().any()].tolist()
+    msno.matrix(dfs[missing_df_i], figsize=(20,5))
+
+#generate_sparsity_matrix(pol)
         
 #generate_heatmap(pol)
 

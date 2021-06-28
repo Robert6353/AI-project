@@ -14,6 +14,14 @@ def read_csvs():
 
     pol = pd.read_csv("pol_new.csv")
     
+    print(pol)
+    
+    pol = pol.drop(
+        columns = ["Attr28", "Attr41", "Attr43", "Attr32", "Attr59", "Attr52",
+                   "Attr5", "Attr47", "Attr15", "Attr4", "Attr30", "Attr20", "Attr57"])
+    
+    print(pol)
+    
     pol_y = pol_original["class"]
     
     pol_y.to_csv("pol_y.csv")
@@ -40,7 +48,7 @@ def train_test(df, df_original):
     print(test)
 
     #Resplit the train dataset into the inputs and targt values again
-    x_train = train.iloc[:,0:26]
+    x_train = train.iloc[:,0:13]
 
     y_train = train["class"]
 
@@ -51,7 +59,7 @@ def train_test(df, df_original):
     print(y_train)
 
     #Resplit the train datset into the inpts and target values again
-    x_test = test.iloc[:,0:26]
+    x_test = test.iloc[:,0:13]
 
     y_test = test["class"]
 
@@ -90,22 +98,11 @@ def check_data_imbalance(pol):
         
 #check_data_imbalance(train)
 
-# =============================================================================
-# def split_dataframes_features_labels(dfs):
-#     feature_dfs = [dfs.iloc[:,28]]
-#     label_dfs = [dfs.iloc[:,28]]
-#     print("")
-#     print( feature_dfs)
-#     print("")
-#     print(label_dfs)
-# =============================================================================
-
-#split_dataframes_features_labels(pol)
-
 def smote(x_train, y_train):
     X = pd.DataFrame(x_train)
     #print(X)
     y = y_train
+    
     undersample = RandomUnderSampler(sampling_strategy = 0.1)
     
     print("X")
@@ -115,6 +112,14 @@ def smote(x_train, y_train):
     print(y)
     
     print(Counter(y))
+    
+    X = X.sort_index()
+    
+    print(X)
+    
+    y = y.sort_index()
+    
+    print(y)
 
     #smote = SMOTE(random_state=0)
     X_resampled, y_resampled = undersample.fit_resample(X, y)
@@ -125,50 +130,74 @@ def smote(x_train, y_train):
 
     #print(X_resampled)
 
+    print("y1")
     print(Counter(y_resampled))
     print(y_resampled)
 
-    oversample = SMOTE(sampling_strategy = 0.2)
+    oversample = SMOTE(sampling_strategy = 0.5)
 
     X_Smote, y_Smote = oversample.fit_resample(X_resampled, y_resampled)
     
     return X_Smote, y_Smote
 
 def smote_csv(X_Smote, y_Smote):
-    #print(X_Smote)
-    #print("")
-    #print(y_Smote)
+    print(X_Smote)
+    print("")
+    print(y_Smote)
 
     print(Counter(y_Smote))
 
-    #X_Smote.to_csv("x_smote.csv")
+    X_Smote.to_csv("x_smote.csv")
 
-    #y_Smote.to_csv("y_smote.csv")
+    y_Smote.to_csv("y_smote.csv")
 
 df, df_original = read_csvs()
 
 train, test, x_train, y_train, x_test, y_test = train_test(df, df_original)
 
-x_train = standardise(x_train)
+x_new = x_test.join(y_test)
 
-print("x_train")
-print(x_train)
+print(x_new["class"])
 
-print("y_train")
-print(y_train)
+#print(x_test.info())
+
+print(x_new.groupby(by = "class").mean()["Attr1"])
+print(x_new.groupby(by = "class").mean()["Attr2"])
+print(x_new.groupby(by = "class").mean()["Attr3"])
+print(x_new.groupby(by = "class").mean()["Attr9"])
+print(x_new.groupby(by = "class").mean()["Attr13"])
+print(x_new.groupby(by = "class").mean()["Attr19"])
+print(x_new.groupby(by = "class").mean()["Attr21"])
+print(x_new.groupby(by = "class").mean()["Attr27"])
+print(x_new.groupby(by = "class").mean()["Attr29"])
+print(x_new.groupby(by = "class").mean()["Attr37"])
+print(x_new.groupby(by = "class").mean()["Attr39"])
+print(x_new.groupby(by = "class").mean()["Attr42"])
+print(x_new.groupby(by = "class").mean()["Attr55"])
+
+#x_train = standardise(x_train)
+
+#print("x_train")
+#print(x_train)
+
+#print("y_train")
+#print(y_train)
 
 #x_train.to_csv("x_train_nsmote.csv")
 
 #y_train.to_csv("y_train_nsmote.csv")
 
-x_test = standardise(x_test)
+#x_test = standardise(x_test)
 
-print("x_test")
-print(x_test)
+#print("x_test")
+#print(x_test)
+
+#print("y_test")
+#print(y_test)
 
 #x_test.to_csv("x_test_nsmote.csv")
 
-#y_test.to_csv("y_test_nsmote.scv")
+#y_test.to_csv("y_test_nsmote.csv")
 
 #df1 = x_train.assign(e=pd.Series(np.random.randn(sLength)).values)
 
@@ -177,13 +206,13 @@ print(x_test)
 #print("pol")
 #print(pol)
 
-x_smote, y_smote = smote(x_train, y_train)
+#x_smote, y_smote = smote(x_train, y_train)
 
-print(x_smote)
+#print(x_smote)
 
-print(y_smote)
+#print(y_smote)
 
-smote_csv(x_smote, y_smote)
+#smote_csv(x_smote, y_smote)
 
 #pol.to_csv("pol_smote_train.csv")
 

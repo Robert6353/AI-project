@@ -63,7 +63,7 @@ def roc_curves(clf, name, accuracy):
     print('Best Threshold=%f, G-Mean=%.3f' % (threshold[ix], aca[ix]))
     
     # plot the roc curve for the model
-    pyplot.plot(ns_fpr, ns_tpr, label='No Skill')
+    #pyplot.plot(ns_fpr, ns_tpr, label='No Skill')
     pyplot.plot(lr_fpr, lr_tpr, label= name)
     # axis labels
     pyplot.xlabel('False Positive Rate')
@@ -163,7 +163,7 @@ def random_forest():
     
     roc_curves(clf, name, accuracy)
 
-#random_forest()
+random_forest()
 
 def SVM():
     name = "Support vector machines"
